@@ -54,7 +54,7 @@ private:
         std::cout << "[" << std::put_time(std::localtime(&time), "%H:%M:%S") << "] ";
     }
 
-    void logMessage(LogLevel level, const char* title, const char* format, va_list args, bool endline = true) const {
+    void logMessage(LogLevel level, const char* title, const char* format, va_list args, bool endLine = true) const {
         setColor(level);
 
         if (timestampEnabled)
@@ -66,7 +66,7 @@ private:
         resetColor();
         vprintf(format, args);
 
-        if (endline)
+        if (endLine)
             std::cout << std::endl;
     }
 
