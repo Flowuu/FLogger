@@ -61,10 +61,10 @@ private:
             printTimestamp();
 
         if (title)
-            std::cout << "|" << title << "| ";
+            std::cout << "|" << title << "| ", resetColor();
 
-        resetColor();
         vprintf(format, args);
+        resetColor();
 
         if (endLine)
             std::cout << std::endl;
