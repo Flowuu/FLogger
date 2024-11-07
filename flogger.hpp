@@ -41,7 +41,6 @@ class FLog {
 private:
     FILE* filePointer = nullptr;
     bool timestampEnabled = false;
-    bool showCursorEnabled = false;
     HANDLE consoleHandle;
 
     void resetColor() const {
@@ -71,11 +70,13 @@ private:
     }
 
 public:
-    explicit FLog(const char* title, HANDLE conHandle = GetStdHandle(STD_OUTPUT_HANDLE)) : consoleHandle(conHandle) {
+    explicit FLog(const char* title) {
 #ifdef ALLOCATE_CONSOLE
         AllocConsole();
         freopen_s(&filePointer, "CONOUT$", "w", stdout);
 #endif
+        consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
         if (title != nullptr)
             SetConsoleTitleA(title);
     }
@@ -172,13 +173,12 @@ public:
     }
 
     void showCursor() {
-        showCursorEnabled = !showCursorEnabled;
         CONSOLE_CURSOR_INFO cursorInfo;
 
         if (!GetConsoleCursorInfo(consoleHandle, &cursorInfo))
             return;
 
-        cursorInfo.bVisible = showCursorEnabled;
+        cursorInfo.bVisible = !cursorInfo.bVisible;
         SetConsoleCursorInfo(consoleHandle, &cursorInfo);
     }
 
