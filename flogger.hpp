@@ -13,6 +13,9 @@
 #define ALLOCATE_CONSOLE
 #define GLOBAL_CONSOLE
 
+#define LOG_ERROR_AT() \
+    console.report(LogLevel::error, "%s -> %d", __FUNCSIG__, __LINE__)
+
 enum class LogLevel : unsigned int {
     black,
     blue,
@@ -47,20 +50,14 @@ private:
         setColor(LogLevel::white);
     }
 
-    void printTimestamp() const {
-        auto now = std::chrono::system_clock::now();
-        std::time_t time = std::chrono::system_clock::to_time_t(now);
-        std::cout << "[" << std::put_time(std::localtime(&time), "%H:%M:%S") << "] ";
-    }
-
     void logMessage(LogLevel level, const char* title, const char* format, va_list args, bool endLine = true) const {
         setColor(level);
 
         if (timestampEnabled)
-            printTimestamp();
+            std::cout << __TIME__ << "| ";
 
         if (title)
-            std::cout << "|" << title << "| ", resetColor();
+            std::cout << "[" << title << "] ", resetColor();
 
         vprintf(format, args);
         resetColor();
