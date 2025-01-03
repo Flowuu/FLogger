@@ -68,3 +68,6 @@ std::cout << "Last Error: " << console->getLastError() << std::endl;
 ### Console Manipulation
 - Toggle Cursor Visibility: Use `showCursor()` to toggle the cursor visibility.
 - Clear Console: Use `clear()` to clear the entire console output.
+
+### Image from `example/main.cpp`
+![image](https://github.com/user-attachments/assets/f0c3dba7-b9e8-41b3-abb0-9641f887e3ee)
