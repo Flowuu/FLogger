@@ -28,7 +28,7 @@
 
 // Configuration Macros
 constexpr bool flog_allocate = false;  // Enable = 1, disable = 0 console allocation
-constexpr bool flog_enable   = false;  // Enable = 1, disable = 0 logging entirely
+constexpr bool flog_disable  = false;  // Enable = 1, disable = 0 logging entirely
 
 enum class LogLevel : unsigned int {
     black,
@@ -59,7 +59,7 @@ class FLog {
     inline static bool m_timeStamp       = false;
 
     void logMessage(LogLevel level, const char* title, const char* input, va_list args) const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         FLog::setColor(level);
 
@@ -76,7 +76,7 @@ class FLog {
 
    public:
     explicit FLog(const char* title = "Untitled") {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         if (flog_allocate) {
             AllocConsole();
@@ -94,7 +94,7 @@ class FLog {
 
     template <typename Type>
     auto getInput(const char* input, ...) const -> Type {
-        if (!flog_enable) return Type{};
+        if (flog_disable) return Type{};
 
         va_list args;
         va_start(args, input);
@@ -116,7 +116,7 @@ class FLog {
 
     template <typename Type>
     auto getInput(LogLevel level, const char* input, ...) const -> Type {
-        if (!flog_enable) return Type{};
+        if (flog_disable) return Type{};
 
         va_list args;
         va_start(args, input);
@@ -137,7 +137,7 @@ class FLog {
     }
 
     void report(LogLevel level, const char* input, ...) const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         const char* title;
         switch (level) {
@@ -165,7 +165,7 @@ class FLog {
     }
 
     void log(const char* input, ...) const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         va_list args;
         va_start(args, input);
@@ -174,7 +174,7 @@ class FLog {
     }
 
     void log(LogLevel level, const char* input, ...) const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         va_list args;
         va_start(args, input);
@@ -183,7 +183,7 @@ class FLog {
     }
 
     void showCursor() const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         CONSOLE_CURSOR_INFO cursorInfo;
         if (!GetConsoleCursorInfo(m_consoleHandle, &cursorInfo)) return;
@@ -193,19 +193,19 @@ class FLog {
     }
 
     void toggleTimestamp() const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         m_timeStamp = !m_timeStamp;
     }
 
     void resetColor() const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         setColor(LogLevel::white);
     }
 
     void setColor(LogLevel level) const {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         if (level < LogLevel::black || level > LogLevel::white) level = LogLevel::white;
 
@@ -213,7 +213,7 @@ class FLog {
     }
 
     void clear() {
-        if (!flog_enable) return;
+        if (flog_disable) return;
 
         CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
         DWORD written;
@@ -226,11 +226,12 @@ class FLog {
     }
 
     void destroy() const {
-        if (!flog_enable || !flog_allocate) return;
+        if (flog_disable || !flog_allocate) return;
 
         CloseHandle(m_consoleHandle);
         FreeConsole();
     }
 };
+extern std::unique_ptr<FLog> console = std::make_unique<FLog>();
 
 #endif  // !FLOGGER_HPP
